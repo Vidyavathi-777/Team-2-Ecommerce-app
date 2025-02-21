@@ -8,7 +8,7 @@ const isStrongPassword = (password) =>{
 }
 
 const registerUser = async({name,email,password,role,phone}) =>{
-    const {name,email,password,role,phone} = req.body;
+    
         if(!name || !email || !password){
             return res.status(400).json({error:"All fields are required"})
         }
@@ -30,14 +30,14 @@ const registerUser = async({name,email,password,role,phone}) =>{
 }
 
 const loginUser = async(email,password) =>{
-    console.log("Email:", email);
-    console.log("Password:", password);
+    // console.log("Email:", email);
+    // console.log("Password:", password);
     const user = await prisma.user.findUnique({ where: { email} });
     console.log("user found:",user)
     if(!user) throw new Error("Invalid email ");
 
     const isMatch = await bcrypt.compare(password,user.password)
-    console.log("passord match",isMatch)
+    // console.log("passord match",isMatch)
     if(!isMatch) throw new Error("Invalid Password");
 
     const token = jwt.sign(
@@ -45,7 +45,7 @@ const loginUser = async(email,password) =>{
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
     );
-    console.log(token)
+    // console.log(token)
     return { token, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
     
 }
