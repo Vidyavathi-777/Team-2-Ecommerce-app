@@ -12,3 +12,177 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role{
+  buyer
+  seller
+  admin
+}
+
+model User {   //store user information
+  id  String @id @default(uuid())
+  image String?
+  name String 
+  email String @unique
+  password String 
+  role Role @default(buyer) // "buyer" or "seller"
+  phone String?
+
+  createdAt DateTime @default(now())
+  address Address[]
+
+  cartItems Cart[]  
+  wishlist Wishlist[]   
+  reviews Review[] 
+  orders Order[] 
+
+
+}
+
+model Address{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId],references: [id])
+  street String
+  city String
+  state String
+  zipcode String
+  country String
+  createdAt DateTime @default(now())
+}
+
+model Brand {  // Store brand details
+  id   String @id @default(uuid())
+  name String @unique
+  products Product[]
+}
+
+model Product{  //store products
+  id String @id @default(uuid())
+  name String
+  description String
+  price Float
+  stock Int
+  imageUrl String?
+  categoryId String
+  subCategoryId String?
+  brandId String?
+
+  category Category @relation(fields: [categoryId],references: [id])
+  subcategory  SubCategory? @relation(fields: [subCategoryId],references: [id])
+  brand Brand? @relation(fields: [brandId], references: [id])
+
+  
+  cartItems Cart[]  
+  wishlist Wishlist[]  
+  reviews Review[]    
+  orderItems OrderItem[]   
+
+  variants ProductVariant[]
+  images ProductImage[]
+  bestSeller  BestSeller?
+
+
+}
+
+model ProductVariant{  //store product variants
+  id String  @id @default(uuid())
+  productId String
+  sku String  @unique
+  size String?
+  color String?
+  price Float
+  stock Int
+
+  product Product @relation(fields: [productId],references: [id])
+  images ProductImage[]
+}
+
+model ProductImage {  // store product images
+  id        String  @id @default(uuid())
+  productId String
+  variantId String?  // Optional: for images that belong to variants
+  url       String
+
+  product   Product       @relation(fields: [productId], references: [id])
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])  // Optional relation
+}
+
+
+model Category{  //store product category
+  id String @id @default(uuid())
+  name String @unique
+
+  products Product[]
+  subcategories SubCategory[]
+}
+
+model SubCategory{
+  id String @id @default(uuid())
+  name String @unique
+  categoryId String
+
+  category Category @relation(fields: [categoryId],references: [id])
+  products Product[]
+}
+
+model Cart {  //sore user cart items
+  id String @id @default(uuid())
+  userId String
+  productId String
+  quantity Int @default(1)
+
+  user User @relation(fields: [userId],references: [id])
+  product Product @relation(fields: [productId],references: [id])
+}
+
+model Wishlist{  //store user wishlist
+  id String @id @default(uuid())
+  userId String
+  productId String
+
+  user User @relation(fields: [userId],references: [id])
+  product Product @relation(fields: [productId],references: [id])
+}
+
+model Order{  //sore user orders
+  id String @id @default(uuid())
+  userId String
+  total Float
+  createdAt DateTime @default(now())
+  status        String    @default("pending")
+  paymentStatus String    @default("unpaid")
+
+  user User @relation(fields: [userId],references: [id])
+  orderItems OrderItem[]
+}
+
+model OrderItem{  //store the orde item details
+  id String @id @default(uuid())
+  orderId String
+  productId String
+  quantity Int
+  price Float
+
+  order Order @relation(fields: [orderId],references: [id])
+  product Product @relation(fields: [productId],references: [id])
+}
+
+model Review {  //store product review
+  id String @id @default(uuid())
+  userId String
+  productId String
+  rating Int @default(5)
+  comment String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId],references: [id])
+  product Product @relation(fields: [productId],references: [id])
+}
+
+model BestSeller {
+  id String @id @default(uuid())
+  productId String @unique
+
+  product Product @relation(fields: [productId],references: [id])
+}
