@@ -7,27 +7,27 @@ const isStrongPassword = (password) =>{
     return password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password)
 }
 
-const registerUser = async({name,email,password,role,phone}) =>{
-    
-        if(!name || !email || !password){
-            return res.status(400).json({error:"All fields are required"})
-        }
-        if (!isValidEmail(email)){
-            return res.status(400).json({error:"Invalid email format"})
-        }
-        if (!isStrongPassword(password)){
-            return res.status(400).json({error:"Password must be at least 8 characters long, include a number and an uppercase letter."})
-        }
-    const existingUser = await prisma.user.findUnique({where:{email}})
-    if(existingUser) {
-        throw new Error("User already exists")
+const registerUser = async ({ name, email, password, role, phone }) => {
+    if (!name || !email || !password) {
+        throw new Error("All fields are required");
     }
-    const hashedpassword = await bcrypt.hash(password,10)
-    return await prisma.user.create({
-        data:{name,email,password:hashedpassword,role,phone},
-    })
+    if (!isValidEmail(email)) {
+        throw new Error("Invalid email format");
+    }
+    if (!isStrongPassword(password)) {
+        throw new Error("Password must be at least 8 characters long, include a number and an uppercase letter.");
+    }
 
-}
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+        throw new Error("User already exists");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return await prisma.user.create({
+        data: { name, email, password: hashedPassword, role, phone },
+    });
+};
 
 const loginUser = async(email,password) =>{
     // console.log("Email:", email);
