@@ -66,7 +66,7 @@ const updateUserProfile = async(id,updateData) =>{
 
 }
 
-const deleteUserProfile =async() =>{
+const deleteUserProfile =async(id) =>{
     return await prisma.user.delete({
         where:{id}
     })
