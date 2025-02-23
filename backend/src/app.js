@@ -13,6 +13,12 @@ app.use('/users', userRoutes);
 
 const PORT = process.env.PORT || 8080;
 
+process.on("SIGTERM", () => {
+    console.log("SIGTERM received. Shutting down...");
+    process.exit(0);
+});
+
+
 app.listen(PORT, "0.0.0.0",() => {
     console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
