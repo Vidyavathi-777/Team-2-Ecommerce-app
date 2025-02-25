@@ -25,10 +25,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // console.log("JWT_SECRET from env:", JWT_SECRET ? "Loaded" : "Not Loaded");
 
 
-process.on("SIGTERM", () => {
-    console.log("SIGTERM received. Shutting down...");
-    process.exit(0);
-});
+// process.on("SIGTERM", () => {
+//     console.log("SIGTERM received. Shutting down...");
+//     process.exit(0);
+// });
 
 
 app.listen(PORT, "0.0.0.0",() => {
