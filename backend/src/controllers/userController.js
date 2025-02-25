@@ -23,7 +23,7 @@ const loginUser = async(req,res) =>{
         // console.log("Email:", email);
         // console.log("Password:", password);
         const {token,user} = await userService.loginUser(email,password)
-        res.status(201).json({token,user})
+        res.status(200).json({token,user})
     }catch(error){
         res.status(400).json({error:error.message})
     }
